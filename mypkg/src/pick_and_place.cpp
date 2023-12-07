@@ -228,14 +228,14 @@ double IK(double L[], double xt[], double Rt[],double psi, double theta[]){
     
     angle(Rt,3);
     
-    double r[3][3];
-    r[0][0] = cos(Rt[1])*cos(Rt[2]) ;  r[0][1] = -1*sin(Rt[1])*sin(Rt[2]) ;  r[0][2] = sin(Rt[1]);
-    r[1][0] = sin(Rt[0])*sin(Rt[1])*cos(Rt[2]) + cos(Rt[1])*sin(Rt[2]);  r[1][1] = -1*sin(Rt[0])*sin(Rt[1])*sin(Rt[2]) + cos(Rt[0])*cos(Rt[2]);  r[1][2] = -1*sin(Rt[0])*cos(Rt[1]);
-    r[2][0] = -1*cos(Rt[0])*sin(Rt[1])*cos(Rt[2]) + sin(Rt[0])*sin(Rt[2]);  r[2][1] = cos(Rt[0])*sin(Rt[1])*sin(Rt[2]) + sin(Rt[0])*cos(Rt[2]);  r[2][2] = cos(Rt[0])*cos(Rt[1]);
+    double rt[3][3];
+    rt[0][0] = cos(Rt[1])*cos(Rt[2]) ;  rt[0][1] = -1*sin(Rt[1])*sin(Rt[2]) ;  rt[0][2] = sin(Rt[1]);
+    rt[1][0] = sin(Rt[0])*sin(Rt[1])*cos(Rt[2]) + cos(Rt[1])*sin(Rt[2]);  rt[1][1] = -1*sin(Rt[0])*sin(Rt[1])*sin(Rt[2]) + cos(Rt[0])*cos(Rt[2]);  rt[1][2] = -1*sin(Rt[0])*cos(Rt[1]);
+    rt[2][0] = -1*cos(Rt[0])*sin(Rt[1])*cos(Rt[2]) + sin(Rt[0])*sin(Rt[2]);  rt[2][1] = cos(Rt[0])*sin(Rt[1])*sin(Rt[2]) + sin(Rt[0])*cos(Rt[2]);  rt[2][2] = cos(Rt[0])*cos(Rt[1]);
     double x_sw[3];
-    x_sw[0] = xt[0] - r[0][2] * L[3];
-    x_sw[1] = xt[1] - r[1][2] * L[3];
-    x_sw[2] = xt[2] - L[0] - r[2][2] * L[3];
+    x_sw[0] = xt[0] - rt[0][2] * L[3];
+    x_sw[1] = xt[1] - rt[1][2] * L[3];
+    x_sw[2] = xt[2] - L[0] - rt[2][2] * L[3];
     double nor_xsw2;
     nor_xsw2 = x_sw[0]*x_sw[0] + x_sw[1]*x_sw[1] + x_sw[2]*x_sw[2];
     double u_sw[3];
@@ -245,14 +245,18 @@ double IK(double L[], double xt[], double Rt[],double psi, double theta[]){
 
     theta[3] = -1*acos((nor_xsw2 - L[1]*L[1] - L[2]*L[2])/(2*L[1]*L[2]));
 
-    double theta20,theta10,S2,C2,M,N;
+    double theta30=0,theta20,theta10,S20,C20,M,N;
     theta10 = atan2( x_sw[1] , x_sw[0] );
     N = sin(theta[3])*L[2];
     M = cos(theta[3])*L[2] + L[1];
-    S2 = -1*( M*sqrt( x_sw[0]*x_sw[0] + x_sw[1]*x_sw[1] ) + N*x_sw[2] )/( N*N + M*M );
-    C2 = ( N*sqrt( x_sw[0]*x_sw[0] + x_sw[1]*x_sw[1] ) - M*x_sw[2] )/( N*N + M*M );
-    theta20 = atan2( S2 , C2 );
-
+    S20 = -1*( M*sqrt( x_sw[0]*x_sw[0] + x_sw[1]*x_sw[1] ) + N*x_sw[2] )/( N*N + M*M );
+    C20 = ( N*sqrt( x_sw[0]*x_sw[0] + x_sw[1]*x_sw[1] ) - M*x_sw[2] )/( N*N + M*M );
+    theta20 = atan2( S20 , C20 );
+    double r[3][3];
+    r[0][0] = cos(Rt[1])*cos(Rt[2]) ;  r[0][1] = -1*sin(Rt[1])*sin(Rt[2]) ;  r[0][2] = sin(Rt[1]);
+    r[1][0] = sin(Rt[0])*sin(Rt[1])*cos(Rt[2]) + cos(Rt[1])*sin(Rt[2]);  r[1][1] = -1*sin(Rt[0])*sin(Rt[1])*sin(Rt[2]) + cos(Rt[0])*cos(Rt[2]);  r[1][2] = -1*sin(Rt[0])*cos(Rt[1]);
+    r[2][0] = -1*cos(Rt[0])*sin(Rt[1])*cos(Rt[2]) + sin(Rt[0])*sin(Rt[2]);  r[2][1] = cos(Rt[0])*sin(Rt[1])*sin(Rt[2]) + sin(Rt[0])*cos(Rt[2]);  r[2][2] = cos(Rt[0])*cos(Rt[1]);
+    
     double As[3][3],Bs[3][3],Cs[3][3];
     As[0][0] = -1*u_sw[2]*r[1][0] + u_sw[1]*r[2][0];
     As[0][1] = -1*u_sw[2]*r[1][1] + u_sw[1]*r[2][1];
@@ -293,23 +297,23 @@ double IK(double L[], double xt[], double Rt[],double psi, double theta[]){
     }
 
     double Aw[3][3],Bw[3][3],Cw[3][3];
-    Aw[0][2] = r[0][2]*( As[0][0]*cos(L[3]) + As[0][1]*sin(L[3]) ) + r[1][2]*( As[1][0]*cos(L[3]) + As[1][1]*sin(L[3]) ) + r[2][2]*( As[2][0]*cos(L[3]) + As[2][1]*sin(L[3]) );
-    Aw[1][2] = r[0][2]*As[0][1] + r[1][2]*As[1][1] + r[2][2]*As[2][1];
-    Aw[2][0] = r[0][0]*( As[0][0]*sin(L[3]) - As[0][1]*cos(L[3]) ) + r[1][0]*( As[1][0]*sin(L[3]) - As[1][1]*cos(L[3]) ) + r[2][0]*( As[2][0]*sin(L[3]) + As[2][1]*cos(L[3]) );
-    Aw[2][1] = r[0][1]*( As[0][0]*sin(L[3]) - As[0][1]*cos(L[3]) ) + r[1][1]*( As[1][0]*sin(L[3]) - As[1][1]*cos(L[3]) ) + r[2][1]*( As[2][0]*sin(L[3]) + As[2][1]*cos(L[3]) );
-    Aw[2][2] = r[0][2]*( As[0][0]*sin(L[3]) - As[0][1]*cos(L[3]) ) + r[1][2]*( As[1][0]*sin(L[3]) - As[1][1]*cos(L[3]) ) + r[2][2]*( As[2][0]*sin(L[3]) + As[2][1]*cos(L[3]) );
+    Aw[0][2] = rt[0][2]*( As[0][0]*cos(L[3]) + As[0][1]*sin(L[3]) ) + rt[1][2]*( As[1][0]*cos(L[3]) + As[1][1]*sin(L[3]) ) + rt[2][2]*( As[2][0]*cos(L[3]) + As[2][1]*sin(L[3]) );
+    Aw[1][2] = rt[0][2]*As[0][1] + rt[1][2]*As[1][1] + rt[2][2]*As[2][1];
+    Aw[2][0] = rt[0][0]*( As[0][0]*sin(L[3]) - As[0][1]*cos(L[3]) ) + rt[1][0]*( As[1][0]*sin(L[3]) - As[1][1]*cos(L[3]) ) + rt[2][0]*( As[2][0]*sin(L[3]) + As[2][1]*cos(L[3]) );
+    Aw[2][1] = rt[0][1]*( As[0][0]*sin(L[3]) - As[0][1]*cos(L[3]) ) + rt[1][1]*( As[1][0]*sin(L[3]) - As[1][1]*cos(L[3]) ) + rt[2][1]*( As[2][0]*sin(L[3]) + As[2][1]*cos(L[3]) );
+    Aw[2][2] = rt[0][2]*( As[0][0]*sin(L[3]) - As[0][1]*cos(L[3]) ) + rt[1][2]*( As[1][0]*sin(L[3]) - As[1][1]*cos(L[3]) ) + rt[2][2]*( As[2][0]*sin(L[3]) + As[2][1]*cos(L[3]) );
 
-    Bw[0][2] = r[0][2]*( Bs[0][0]*cos(L[3]) + Bs[0][1]*sin(L[3]) ) + r[1][2]*( Bs[1][0]*cos(L[3]) + Bs[1][1]*sin(L[3]) ) + r[2][2]*( Bs[2][0]*cos(L[3]) + Bs[2][1]*sin(L[3]) );
-    Bw[1][2] = r[0][2]*Bs[0][1] + r[1][2]*Bs[1][1] + r[2][2]*Bs[2][1];
-    Bw[2][0] = r[0][0]*( Bs[0][0]*sin(L[3]) - Bs[0][1]*cos(L[3]) ) + r[1][0]*( Bs[1][0]*sin(L[3]) - Bs[1][1]*cos(L[3]) ) + r[2][0]*( Bs[2][0]*sin(L[3]) + Bs[2][1]*cos(L[3]) );
-    Bw[2][1] = r[0][1]*( Bs[0][0]*sin(L[3]) - Bs[0][1]*cos(L[3]) ) + r[1][1]*( Bs[1][0]*sin(L[3]) - Bs[1][1]*cos(L[3]) ) + r[2][1]*( Bs[2][0]*sin(L[3]) + Bs[2][1]*cos(L[3]) );
-    Bw[2][2] = r[0][2]*( Bs[0][0]*sin(L[3]) - Bs[0][1]*cos(L[3]) ) + r[1][2]*( Bs[1][0]*sin(L[3]) - Bs[1][1]*cos(L[3]) ) + r[2][2]*( Bs[2][0]*sin(L[3]) + Bs[2][1]*cos(L[3]) );
+    Bw[0][2] = rt[0][2]*( Bs[0][0]*cos(L[3]) + Bs[0][1]*sin(L[3]) ) + rt[1][2]*( Bs[1][0]*cos(L[3]) + Bs[1][1]*sin(L[3]) ) + rt[2][2]*( Bs[2][0]*cos(L[3]) + Bs[2][1]*sin(L[3]) );
+    Bw[1][2] = rt[0][2]*Bs[0][1] + rt[1][2]*Bs[1][1] + rt[2][2]*Bs[2][1];
+    Bw[2][0] = rt[0][0]*( Bs[0][0]*sin(L[3]) - Bs[0][1]*cos(L[3]) ) + rt[1][0]*( Bs[1][0]*sin(L[3]) - Bs[1][1]*cos(L[3]) ) + rt[2][0]*( Bs[2][0]*sin(L[3]) + Bs[2][1]*cos(L[3]) );
+    Bw[2][1] = rt[0][1]*( Bs[0][0]*sin(L[3]) - Bs[0][1]*cos(L[3]) ) + rt[1][1]*( Bs[1][0]*sin(L[3]) - Bs[1][1]*cos(L[3]) ) + rt[2][1]*( Bs[2][0]*sin(L[3]) + Bs[2][1]*cos(L[3]) );
+    Bw[2][2] = rt[0][2]*( Bs[0][0]*sin(L[3]) - Bs[0][1]*cos(L[3]) ) + rt[1][2]*( Bs[1][0]*sin(L[3]) - Bs[1][1]*cos(L[3]) ) + rt[2][2]*( Bs[2][0]*sin(L[3]) + Bs[2][1]*cos(L[3]) );
 
-    Cw[0][2] = r[0][2]*( Cs[0][0]*cos(L[3]) + Cs[0][1]*sin(L[3]) ) + r[1][2]*( Cs[1][0]*cos(L[3]) + Cs[1][1]*sin(L[3]) ) + r[2][2]*( Cs[2][0]*cos(L[3]) + Cs[2][1]*sin(L[3]) );
-    Cw[1][2] = r[0][2]*Cs[0][1] + r[1][2]*Cs[1][1] + r[2][2]*Cs[2][1];
-    Cw[2][0] = r[0][0]*( Cs[0][0]*sin(L[3]) - Cs[0][1]*cos(L[3]) ) + r[1][0]*( Cs[1][0]*sin(L[3]) - Cs[1][1]*cos(L[3]) ) + r[2][0]*( Cs[2][0]*sin(L[3]) + Cs[2][1]*cos(L[3]) );
-    Cw[2][1] = r[0][1]*( Cs[0][0]*sin(L[3]) - Cs[0][1]*cos(L[3]) ) + r[1][1]*( Cs[1][0]*sin(L[3]) - Cs[1][1]*cos(L[3]) ) + r[2][1]*( Cs[2][0]*sin(L[3]) + Cs[2][1]*cos(L[3]) );
-    Cw[2][2] = r[0][2]*( Cs[0][0]*sin(L[3]) - Cs[0][1]*cos(L[3]) ) + r[1][2]*( Cs[1][0]*sin(L[3]) - Cs[1][1]*cos(L[3]) ) + r[2][2]*( Cs[2][0]*sin(L[3]) + Cs[2][1]*cos(L[3]) );
+    Cw[0][2] = rt[0][2]*( Cs[0][0]*cos(L[3]) + Cs[0][1]*sin(L[3]) ) + rt[1][2]*( Cs[1][0]*cos(L[3]) + Cs[1][1]*sin(L[3]) ) + rt[2][2]*( Cs[2][0]*cos(L[3]) + Cs[2][1]*sin(L[3]) );
+    Cw[1][2] = rt[0][2]*Cs[0][1] + rt[1][2]*Cs[1][1] + rt[2][2]*Cs[2][1];
+    Cw[2][0] = rt[0][0]*( Cs[0][0]*sin(L[3]) - Cs[0][1]*cos(L[3]) ) + rt[1][0]*( Cs[1][0]*sin(L[3]) - Cs[1][1]*cos(L[3]) ) + rt[2][0]*( Cs[2][0]*sin(L[3]) + Cs[2][1]*cos(L[3]) );
+    Cw[2][1] = rt[0][1]*( Cs[0][0]*sin(L[3]) - Cs[0][1]*cos(L[3]) ) + rt[1][1]*( Cs[1][0]*sin(L[3]) - Cs[1][1]*cos(L[3]) ) + rt[2][1]*( Cs[2][0]*sin(L[3]) + Cs[2][1]*cos(L[3]) );
+    Cw[2][2] = rt[0][2]*( Cs[0][0]*sin(L[3]) - Cs[0][1]*cos(L[3]) ) + rt[1][2]*( Cs[1][0]*sin(L[3]) - Cs[1][1]*cos(L[3]) ) + rt[2][2]*( Cs[2][0]*sin(L[3]) + Cs[2][1]*cos(L[3]) );
 
     double theta41,theta42,theta5,theta61,theta62;
     theta41 = Aw[1][2]*sin(psi) + Bw[1][2]*cos(psi) + Cw[1][2] ;
