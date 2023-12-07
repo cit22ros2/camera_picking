@@ -254,7 +254,7 @@ double IK(double L[], double xt[], double Rt[],double psi, double theta[]){
     theta20 = atan2( S20 , C20 );
     double r[3][3];
     r[2][0] = -1*sin(theta20)*sin(theta30) ;  r[2][1] = -1*cos(theta20) ;  r[2][2] = sin(theta20)*sin(theta30);
-    r[1][0] = sin(theta10)*cos(theta20)*cos(theta30) + cos(theta10)*sin(theta30);  r[1][1] = -1*sin(theta10)*sin(theta20);  r[1][2] = -1*sin(theta10)*cos(thet20)*sin(theta30) + cos(theta10)*cos(theta30);
+    r[1][0] = sin(theta10)*cos(theta20)*cos(theta30) + cos(theta10)*sin(theta30);  r[1][1] = -1*sin(theta10)*sin(theta20);  r[1][2] = -1*sin(theta10)*cos(theta20)*sin(theta30) + cos(theta10)*cos(theta30);
     r[0][0] = cos(theta10)*cos(theta20)*cos(theta30) - sin(theta10)*sin(theta30);  r[0][1] = -1*sin(theta20)*cos(theta10);  r[0][2] = -1*cos(theta10)*cos(theta20)*sin(theta30) - sin(theta10)*cos(theta30);
     
     double As[3][3],Bs[3][3],Cs[3][3];
