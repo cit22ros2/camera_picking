@@ -54,6 +54,20 @@ ament_target_dependencies(pick_and_place
     rclcpp
     tf2_geometry_msgs
 )
+add_executable(pick_and_place_test
+  src/pick_and_place_test.cpp
+)
+ament_target_dependencies(pick_and_place_test
+    cv_bridge
+    geometry_msgs
+    image_geometry
+    moveit_ros_planning_interface
+    OpenCV
+    pcl_ros
+    pcl_conversions
+    rclcpp
+    tf2_geometry_msgs
+)
 add_executable(pick_and_place_tf
   src/pick_and_place_tf.cpp
 )
@@ -80,6 +94,10 @@ install(TARGETS
 )
 install(TARGETS
   pick_and_place_tf
+  DESTINATION lib/${PROJECT_NAME}/
+)
+install(TARGETS
+  pick_and_place_test 
   DESTINATION lib/${PROJECT_NAME}/
 )
 

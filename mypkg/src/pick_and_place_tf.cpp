@@ -49,15 +49,15 @@ public:
     moveit_msgs::msg::JointConstraint joint_constraint;
     joint_constraint.joint_name = "crane_x7_lower_arm_fixed_part_joint";
     joint_constraint.position = 0.0;
-    joint_constraint.tolerance_above = angles::from_degrees(30);
-    joint_constraint.tolerance_below = angles::from_degrees(30);
+    joint_constraint.tolerance_above = angles::from_degrees(90);
+    joint_constraint.tolerance_below = angles::from_degrees(90);
     joint_constraint.weight = 1.0;
     constraints.joint_constraints.push_back(joint_constraint);
 
     joint_constraint.joint_name = "crane_x7_upper_arm_revolute_part_twist_joint";
     joint_constraint.position = 0.0;
-    joint_constraint.tolerance_above = angles::from_degrees(30);
-    joint_constraint.tolerance_below = angles::from_degrees(30);
+    joint_constraint.tolerance_above = angles::from_degrees(90);
+    joint_constraint.tolerance_below = angles::from_degrees(90);
     joint_constraint.weight = 0.8;
     constraints.joint_constraints.push_back(joint_constraint);
 
@@ -152,19 +152,20 @@ private:
     control_gripper(GRIPPER_DEFAULT);
 
     // 掴む準備をする
-    control_arm(target_position.x() - 0.1, target_position.y(), target_position.z() + 0.12, 90, 0, 90);
+    control_arm(target_position.x() - 0.2, target_position.y(), target_position.z() + 0.03, 90, 0, 90);
 
     // ハンドを開く
     control_gripper(GRIPPER_OPEN);
 
     // 掴みに行く
-    control_arm(target_position.x() + 0.1, target_position.y(), target_position.z() , 90, 0, 90);
+    control_arm(target_position.x(), target_position.y(), target_position.z() + 0.03, 90, 0, 90);
 
     // ハンドを閉じる
     control_gripper(GRIPPER_CLOSE);
 
     // 持ち上げる
-    control_arm(target_position.x() - 0.1, target_position.y(), target_position.z() + 0.12, 90, 0, 90);
+    //control_arm(target_position.x(), target_position.y(), target_position.z() + 0.2, 90, 0, 90);
+    init_pose();
 
     // 移動する
     control_arm(0.3, 0.15, 0.2, 90, 0, 90);
@@ -176,7 +177,7 @@ private:
     control_gripper(GRIPPER_OPEN);
 
     // 少しだけハンドを持ち上げる
-    control_arm(0.3, 0.15, 0.2, 90, 0, 90);
+   // control_arm(0.3, 0.15, 0.2, 90, 0, 90);
 
     // 初期姿勢に戻る
     // control_arm(0.15, 0.0, 0.3, -180, 0, 90);

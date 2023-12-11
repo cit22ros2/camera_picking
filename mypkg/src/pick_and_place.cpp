@@ -61,38 +61,28 @@ int main(int argc, char ** argv)
   move_group_gripper.setJointValueTarget(gripper_joint_values);
   move_group_gripper.move();
 
-
+  // 可動範囲を制限する
   moveit_msgs::msg::JointConstraint joint_constraint;
   joint_constraint.joint_name = "crane_x7_lower_arm_fixed_part_joint";
   joint_constraint.position = 0.0;
   joint_constraint.tolerance_above = angles::from_degrees(30);
   joint_constraint.tolerance_below = angles::from_degrees(30);
   joint_constraint.weight = 1.0;
- 
-  // 可動範囲を制限する
   moveit_msgs::msg::Constraints constraints;
   constraints.name = "arm_constraints"; 
   constraints.joint_constraints.push_back(joint_constraint);
-
-  joint_constraint.joint_name = "crane_x7_upper_arm_revolute_part_twist_joint";
-  joint_constraint.position = 0.0;
-  joint_constraint.tolerance_above = angles::from_degrees(30);
-  joint_constraint.tolerance_below = angles::from_degrees(30);
-  joint_constraint.weight = 0.8;
   constraints.joint_constraints.push_back(joint_constraint);
-
   move_group_arm.setPathConstraints(constraints);
 
   geometry_msgs::msg::Pose target_pose;
   tf2::Quaternion q;
 
   double L[4] = { 105,250,250,60 };
-  double xt[3] = { 100,0,200 };
+  double xt[3] = { 100,50,200 };
   double Rt[3] = { 90,0,90 };
   double theta[7] = {0};
-  double psi;psi=30*M_PI/180;
-  psi=0;
-  IK(L,xt,Rt,psi,theta);
+  double psi;psi=45*M_PI/180;
+  //psi=0;
   // 掴む準備をする
   auto joint_values = move_group_arm.getCurrentJointValues();
   joint_values[0]=angles::from_degrees(0);
@@ -105,18 +95,19 @@ int main(int argc, char ** argv)
   move_group_arm.setJointValueTarget(joint_values);
   move_group_arm.move();
 
-  psi = 30 * M_PI / 180;
-  joint_values[0]=angles::from_degrees(0);
-  joint_values[1]=angles::from_degrees(23);
-  joint_values[2]=angles::from_degrees(0);
-  joint_values[3]=angles::from_degrees(-126);
-  joint_values[4]=angles::from_degrees(3);
-  joint_values[5]=angles::from_degrees(28);
-  joint_values[6]=angles::from_degrees(0);
+  IK(L,xt,Rt,psi,theta);
+  joint_values[0]=angles::from_degrees(theta[0]);
+  joint_values[1]=angles::from_degrees(theta[1]);
+  joint_values[2]=angles::from_degrees(theta[2]);
+  joint_values[3]=angles::from_degrees(theta[3]);
+  joint_values[4]=angles::from_degrees(theta[4]);
+  joint_values[5]=angles::from_degrees(theta[5]);
+  joint_values[6]=angles::from_degrees(theta[6]);
   move_group_arm.setJointValueTarget(joint_values);
   move_group_arm.move();
-
-  psi = 0;
+/*
+  Rt[0]=0;
+  IK(L,xt,Rt,psi,theta);
   joint_values[0]=angles::from_degrees(theta[0]);
   joint_values[1]=angles::from_degrees(theta[1]);
   joint_values[2]=angles::from_degrees(theta[2]);
@@ -127,7 +118,43 @@ int main(int argc, char ** argv)
   move_group_arm.setJointValueTarget(joint_values);
   move_group_arm.move();
 
-  xt[2]=100;
+  Rt[2]=90;
+  IK(L,xt,Rt,psi,theta);
+  joint_values[0]=angles::from_degrees(theta[0]);
+  joint_values[1]=angles::from_degrees(theta[1]);
+  joint_values[2]=angles::from_degrees(theta[2]);
+  joint_values[3]=angles::from_degrees(theta[3]);
+  joint_values[4]=angles::from_degrees(theta[4]);
+  joint_values[5]=angles::from_degrees(theta[5]);
+  joint_values[6]=angles::from_degrees(theta[6]);
+  move_group_arm.setJointValueTarget(joint_values);
+  move_group_arm.move();
+
+  psi = 30 * M_PI / 180;
+  IK(L,xt,Rt,psi,theta);
+  joint_values[0]=angles::from_degrees(theta[0]);
+  joint_values[1]=angles::from_degrees(theta[1]);
+  joint_values[2]=angles::from_degrees(theta[2]);
+  joint_values[3]=angles::from_degrees(theta[3]);
+  joint_values[4]=angles::from_degrees(theta[4]);
+  joint_values[5]=angles::from_degrees(theta[5]);
+  joint_values[6]=angles::from_degrees(theta[6]);
+  move_group_arm.setJointValueTarget(joint_values);
+  move_group_arm.move();
+
+  psi = 0;
+  IK(L,xt,Rt,psi,theta);
+  joint_values[0]=angles::from_degrees(theta[0]);
+  joint_values[1]=angles::from_degrees(theta[1]);
+  joint_values[2]=angles::from_degrees(theta[2]);
+  joint_values[3]=angles::from_degrees(theta[3]);
+  joint_values[4]=angles::from_degrees(theta[4]);
+  joint_values[5]=angles::from_degrees(theta[5]);
+  joint_values[6]=angles::from_degrees(theta[6]);
+  move_group_arm.setJointValueTarget(joint_values);
+  move_group_arm.move();
+*/
+  xt[1]=100;
   IK(L,xt,Rt,psi,theta);
   joint_values[0]=angles::from_degrees(theta[0]);
   joint_values[1]=angles::from_degrees(theta[1]);
@@ -139,7 +166,7 @@ int main(int argc, char ** argv)
   move_group_arm.setJointValueTarget(joint_values);
   move_group_arm.move();
   
-  xt[0]=110;
+  xt[1]=-100;
   IK(L,xt,Rt,psi,theta);
   joint_values[0]=angles::from_degrees(theta[0]);
   joint_values[1]=angles::from_degrees(theta[1]);
@@ -156,7 +183,7 @@ int main(int argc, char ** argv)
   move_group_gripper.setJointValueTarget(gripper_joint_values);
   move_group_gripper.move();
   
-  xt[2]=100;
+  xt[1]=100;
   IK(L,xt,Rt,psi,theta);
   joint_values[0]=angles::from_degrees(theta[0]);
   joint_values[1]=angles::from_degrees(theta[1]);
@@ -168,7 +195,7 @@ int main(int argc, char ** argv)
   move_group_arm.setJointValueTarget(joint_values);
   move_group_arm.move();
  
-  xt[1] = 100; 
+  xt[2] = 100; 
   IK(L,xt,Rt,psi,theta);
   joint_values[0]=angles::from_degrees(theta[0]);
   joint_values[1]=angles::from_degrees(theta[1]);
@@ -227,7 +254,7 @@ double degree(double Rt[],int16_t n){
 double IK(double L[], double xt[], double Rt[],double psi, double theta[]){
     
     angle(Rt,3);
-    
+    xt[0] = xt[0] * -1;    
     double rt[3][3];
     rt[0][0] = cos(Rt[1])*cos(Rt[2]) ;  rt[0][1] = -1*sin(Rt[1])*sin(Rt[2]) ;  rt[0][2] = sin(Rt[1]);
     rt[1][0] = sin(Rt[0])*sin(Rt[1])*cos(Rt[2]) + cos(Rt[1])*sin(Rt[2]);  rt[1][1] = -1*sin(Rt[0])*sin(Rt[1])*sin(Rt[2]) + cos(Rt[0])*cos(Rt[2]);  rt[1][2] = -1*sin(Rt[0])*cos(Rt[1]);
@@ -249,8 +276,8 @@ double IK(double L[], double xt[], double Rt[],double psi, double theta[]){
     theta10 = atan2( x_sw[1] , x_sw[0] );
     N = sin(theta[3])*L[2];
     M = cos(theta[3])*L[2] + L[1];
-    S20 = -1*( M*sqrt( x_sw[0]*x_sw[0] + x_sw[1]*x_sw[1] ) + N*x_sw[2] )/( N*N + M*M );
-    C20 = ( N*sqrt( x_sw[0]*x_sw[0] + x_sw[1]*x_sw[1] ) - M*x_sw[2] )/( N*N + M*M );
+    S20 = ( M*sqrt( x_sw[0]*x_sw[0] + x_sw[1]*x_sw[1] ) - N*x_sw[2] )/( N*N + M*M );
+    C20 = ( N*sqrt( x_sw[0]*x_sw[0] + x_sw[1]*x_sw[1] ) + M*x_sw[2] )/( N*N + M*M );
     theta20 = atan2( S20 , C20 );
     double r[3][3];
     r[2][0] = -1*sin(theta20)*sin(theta30) ;  r[2][1] = -1*cos(theta20) ;  r[2][2] = sin(theta20)*sin(theta30);
@@ -260,24 +287,30 @@ double IK(double L[], double xt[], double Rt[],double psi, double theta[]){
     double As[3][3],Bs[3][3],Cs[3][3];
     As[0][0] = -1*u_sw[2]*r[1][0] + u_sw[1]*r[2][0];
     As[0][1] = -1*u_sw[2]*r[1][1] + u_sw[1]*r[2][1];
+    As[0][2] = -1*u_sw[2]*r[1][2] + u_sw[1]*r[2][2];
     As[1][0] = u_sw[2]*r[0][0] - u_sw[0]*r[2][0];
     As[1][1] = u_sw[2]*r[0][1] - u_sw[0]*r[2][1];
+    As[1][2] = u_sw[2]*r[0][2] - u_sw[0]*r[2][2];
     As[2][0] = u_sw[0]*r[1][0] - u_sw[1]*r[0][0];
     As[2][1] = u_sw[0]*r[1][1] - u_sw[1]*r[0][1];
     As[2][2] = u_sw[0]*r[1][2] - u_sw[1]*r[0][1];
 
     Bs[0][0] = -1*u_sw[0]*u_sw[1]*r[1][0] - u_sw[2]*u_sw[0]*r[2][0] + r[0][0]*( u_sw[2]*u_sw[2] + u_sw[1]*u_sw[1] );
     Bs[0][1] = -1*u_sw[0]*u_sw[2]*r[2][1] - u_sw[1]*u_sw[0]*r[1][1] + r[0][1]*( u_sw[2]*u_sw[2] + u_sw[1]*u_sw[1] );
-    Bs[1][0] = -1*u_sw[2]*u_sw[1]*r[2][0] - u_sw[1]*u_sw[0]*r[0][0] + r[1][0]*( u_sw[2]*u_sw[2] + u_sw[1]*u_sw[1] );
-    Bs[1][1] = -1*u_sw[1]*u_sw[2]*r[2][1] - u_sw[1]*u_sw[0]*r[0][1] + r[1][1]*( u_sw[2]*u_sw[2] + u_sw[1]*u_sw[1] );
+    Bs[0][2] = -1*u_sw[0]*u_sw[2]*r[2][2] - u_sw[1]*u_sw[0]*r[1][2] + r[0][2]*( u_sw[2]*u_sw[2] + u_sw[1]*u_sw[1] );
+    Bs[1][0] = -1*u_sw[2]*u_sw[1]*r[2][0] - u_sw[1]*u_sw[0]*r[0][0] + r[1][0]*( u_sw[2]*u_sw[2] + u_sw[0]*u_sw[0] );
+    Bs[1][1] = -1*u_sw[1]*u_sw[2]*r[2][1] - u_sw[1]*u_sw[0]*r[0][1] + r[1][1]*( u_sw[2]*u_sw[2] + u_sw[0]*u_sw[0] );
+    Bs[1][2] = -1*u_sw[1]*u_sw[2]*r[2][2] - u_sw[1]*u_sw[0]*r[0][2] + r[1][2]*( u_sw[2]*u_sw[2] + u_sw[0]*u_sw[0] );
     Bs[2][0] = -1*u_sw[0]*u_sw[2]*r[0][0] - u_sw[1]*u_sw[2]*r[1][0] + r[2][0]*( u_sw[0]*u_sw[0] + u_sw[1]*u_sw[1] );
     Bs[2][1] = -1*u_sw[0]*u_sw[2]*r[0][1] - u_sw[1]*u_sw[2]*r[1][1] + r[2][1]*( u_sw[0]*u_sw[0] + u_sw[1]*u_sw[1] );
     Bs[2][2] = -1*u_sw[0]*u_sw[2]*r[0][2] - u_sw[1]*u_sw[2]*r[1][2] + r[2][2]*( u_sw[0]*u_sw[0] + u_sw[1]*u_sw[1] );
 
     Cs[0][0] = u_sw[0]*u_sw[0]*r[0][0] + u_sw[1]*u_sw[0]*r[1][0] + r[2][0]*u_sw[2]*u_sw[0];
     Cs[0][1] = u_sw[0]*u_sw[0]*r[0][1] + u_sw[1]*u_sw[0]*r[1][1] + r[2][1]*u_sw[2]*u_sw[0];
+    Cs[0][2] = u_sw[0]*u_sw[0]*r[0][2] + u_sw[1]*u_sw[0]*r[1][2] + r[2][2]*u_sw[2]*u_sw[0];
     Cs[1][0] = u_sw[1]*u_sw[0]*r[0][0] + u_sw[1]*u_sw[1]*r[1][0] + r[2][0]*u_sw[2]*u_sw[1];
     Cs[1][1] = u_sw[0]*u_sw[1]*r[0][1] + u_sw[1]*u_sw[1]*r[1][1] + r[2][1]*u_sw[2]*u_sw[1];
+    Cs[1][2] = u_sw[0]*u_sw[1]*r[0][2] + u_sw[1]*u_sw[1]*r[1][2] + r[2][2]*u_sw[2]*u_sw[1];
     Cs[2][0] = u_sw[0]*u_sw[2]*r[0][0] + u_sw[1]*u_sw[2]*r[1][0] + r[2][0]*u_sw[2]*u_sw[2];
     Cs[2][1] = u_sw[0]*u_sw[2]*r[0][1] + u_sw[1]*u_sw[2]*r[1][1] + r[2][1]*u_sw[2]*u_sw[2];
     Cs[2][2] = u_sw[0]*u_sw[2]*r[0][2] + u_sw[1]*u_sw[2]*r[1][2] + r[2][2]*u_sw[2]*u_sw[2];
@@ -286,9 +319,11 @@ double IK(double L[], double xt[], double Rt[],double psi, double theta[]){
     theta01 = -1*( As[1][1]*sin(psi) + Bs[1][1]*cos(psi) + Cs[1][1] );
     theta02 = -1*( As[0][1]*sin(psi) + Bs[0][1]*cos(psi) + Cs[0][1] );
     theta1  = -1*( As[2][1]*sin(psi) + Bs[2][1]*cos(psi) + Cs[2][1] );
-    theta21 =      As[2][2]*sin(psi) + Bs[2][2]*cos(psi) + Cs[2][2];
+    theta21 = As[2][2]*sin(psi) + Bs[2][2]*cos(psi) + Cs[2][2];
     theta22 = -1*( As[2][0]*sin(psi) + Bs[2][0]*cos(psi) + Cs[2][0] );
-    std::cout << "theta01 " << theta01 << " theta02 " << theta02 << " theta1 " << theta1 << " theta21 " << theta21 << " theta22 " << theta22 << std::endl;
+    std::cout << "sin(psi) " << sin(psi) << " cos(psi) " << cos(psi) << std::endl;
+    std::cout << "theta21 " << theta21 << "As33 " << As[2][2] << " Bs33 " << Bs[2][2] << " Cs33 " << Cs[2][2] << std::endl;
+    std::cout << "theta22 " << theta22 << "As31 " << As[2][0] << " Bs31 " << Bs[2][0] << " Cs31 " << Cs[2][0] << std::endl;
     theta[0] = atan2( theta01 , theta02);
     theta[1] = acos( theta1 );
     theta[2] = atan2( theta21 , theta22 );
@@ -298,19 +333,19 @@ double IK(double L[], double xt[], double Rt[],double psi, double theta[]){
 
     double Aw[3][3],Bw[3][3],Cw[3][3];
     Aw[0][2] = rt[0][2]*( As[0][0]*cos(L[3]) + As[0][1]*sin(L[3]) ) + rt[1][2]*( As[1][0]*cos(L[3]) + As[1][1]*sin(L[3]) ) + rt[2][2]*( As[2][0]*cos(L[3]) + As[2][1]*sin(L[3]) );
-    Aw[1][2] = rt[0][2]*As[0][1] + rt[1][2]*As[1][1] + rt[2][2]*As[2][1];
+    Aw[1][2] = rt[0][2]*As[0][2]+ rt[1][2]*As[1][2] + rt[2][2]*As[2][2];
     Aw[2][0] = rt[0][0]*( As[0][0]*sin(L[3]) - As[0][1]*cos(L[3]) ) + rt[1][0]*( As[1][0]*sin(L[3]) - As[1][1]*cos(L[3]) ) + rt[2][0]*( As[2][0]*sin(L[3]) + As[2][1]*cos(L[3]) );
     Aw[2][1] = rt[0][1]*( As[0][0]*sin(L[3]) - As[0][1]*cos(L[3]) ) + rt[1][1]*( As[1][0]*sin(L[3]) - As[1][1]*cos(L[3]) ) + rt[2][1]*( As[2][0]*sin(L[3]) + As[2][1]*cos(L[3]) );
     Aw[2][2] = rt[0][2]*( As[0][0]*sin(L[3]) - As[0][1]*cos(L[3]) ) + rt[1][2]*( As[1][0]*sin(L[3]) - As[1][1]*cos(L[3]) ) + rt[2][2]*( As[2][0]*sin(L[3]) + As[2][1]*cos(L[3]) );
 
     Bw[0][2] = rt[0][2]*( Bs[0][0]*cos(L[3]) + Bs[0][1]*sin(L[3]) ) + rt[1][2]*( Bs[1][0]*cos(L[3]) + Bs[1][1]*sin(L[3]) ) + rt[2][2]*( Bs[2][0]*cos(L[3]) + Bs[2][1]*sin(L[3]) );
-    Bw[1][2] = rt[0][2]*Bs[0][1] + rt[1][2]*Bs[1][1] + rt[2][2]*Bs[2][1];
+    Bw[1][2] = rt[0][2]*Bs[0][2] + rt[1][2]*Bs[1][2] + rt[2][2]*Bs[2][2];
     Bw[2][0] = rt[0][0]*( Bs[0][0]*sin(L[3]) - Bs[0][1]*cos(L[3]) ) + rt[1][0]*( Bs[1][0]*sin(L[3]) - Bs[1][1]*cos(L[3]) ) + rt[2][0]*( Bs[2][0]*sin(L[3]) + Bs[2][1]*cos(L[3]) );
     Bw[2][1] = rt[0][1]*( Bs[0][0]*sin(L[3]) - Bs[0][1]*cos(L[3]) ) + rt[1][1]*( Bs[1][0]*sin(L[3]) - Bs[1][1]*cos(L[3]) ) + rt[2][1]*( Bs[2][0]*sin(L[3]) + Bs[2][1]*cos(L[3]) );
     Bw[2][2] = rt[0][2]*( Bs[0][0]*sin(L[3]) - Bs[0][1]*cos(L[3]) ) + rt[1][2]*( Bs[1][0]*sin(L[3]) - Bs[1][1]*cos(L[3]) ) + rt[2][2]*( Bs[2][0]*sin(L[3]) + Bs[2][1]*cos(L[3]) );
 
     Cw[0][2] = rt[0][2]*( Cs[0][0]*cos(L[3]) + Cs[0][1]*sin(L[3]) ) + rt[1][2]*( Cs[1][0]*cos(L[3]) + Cs[1][1]*sin(L[3]) ) + rt[2][2]*( Cs[2][0]*cos(L[3]) + Cs[2][1]*sin(L[3]) );
-    Cw[1][2] = rt[0][2]*Cs[0][1] + rt[1][2]*Cs[1][1] + rt[2][2]*Cs[2][1];
+    Cw[1][2] = rt[0][2]*Cs[0][2] + rt[1][2]*Cs[1][2] + rt[2][2]*Cs[2][2];
     Cw[2][0] = rt[0][0]*( Cs[0][0]*sin(L[3]) - Cs[0][1]*cos(L[3]) ) + rt[1][0]*( Cs[1][0]*sin(L[3]) - Cs[1][1]*cos(L[3]) ) + rt[2][0]*( Cs[2][0]*sin(L[3]) + Cs[2][1]*cos(L[3]) );
     Cw[2][1] = rt[0][1]*( Cs[0][0]*sin(L[3]) - Cs[0][1]*cos(L[3]) ) + rt[1][1]*( Cs[1][0]*sin(L[3]) - Cs[1][1]*cos(L[3]) ) + rt[2][1]*( Cs[2][0]*sin(L[3]) + Cs[2][1]*cos(L[3]) );
     Cw[2][2] = rt[0][2]*( Cs[0][0]*sin(L[3]) - Cs[0][1]*cos(L[3]) ) + rt[1][2]*( Cs[1][0]*sin(L[3]) - Cs[1][1]*cos(L[3]) ) + rt[2][2]*( Cs[2][0]*sin(L[3]) + Cs[2][1]*cos(L[3]) );
@@ -328,7 +363,8 @@ double IK(double L[], double xt[], double Rt[],double psi, double theta[]){
     if( theta[5] > M_PI/2 ){
         theta[5] = theta[5] - M_PI;
     }
-
+    degree(Rt,3);
+    xt[0] = xt[0] * -1;
     degree(theta,7);
     for(int16_t i = 0; i < 7; i++ ){
         std::cout << i << ":" << theta[i] << ",";

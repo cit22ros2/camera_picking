@@ -28,14 +28,14 @@ public:
   : Node("color_detection")
   {
     image_subscription_ = this->create_subscription<sensor_msgs::msg::Image>(
-      "/camera/color/image_raw", 10, std::bind(&ImageSubscriber::image_callback, this, _1));
+      "/camera/camera/color/image_raw", 10, std::bind(&ImageSubscriber::image_callback, this, _1));
 
     depth_subscription_ = this->create_subscription<sensor_msgs::msg::Image>(
-      "/camera/aligned_depth_to_color/image_raw", 10,
+      "/camera/camera/aligned_depth_to_color/image_raw", 10,
       std::bind(&ImageSubscriber::depth_callback, this, _1));
 
     camera_info_subscription_ = this->create_subscription<sensor_msgs::msg::CameraInfo>(
-      "/camera/color/camera_info", 10, std::bind(&ImageSubscriber::camera_info_callback, this, _1));
+      "/camera/camera/color/camera_info", 10, std::bind(&ImageSubscriber::camera_info_callback, this, _1));
 
     image_thresholded_publisher_ =
       this->create_publisher<sensor_msgs::msg::Image>("image_thresholded", 10);
@@ -100,7 +100,7 @@ private:
       double d_area = moment.m00;
 
       // 検出した領域のピクセル数が10000より大きい場合
-      if (d_area > 10000) {
+      if (d_area > 5000) {
         // カメラモデル作成
         image_geometry::PinholeCameraModel camera_model;
 
